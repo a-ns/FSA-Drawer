@@ -8,6 +8,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextBoundsType;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -19,7 +21,8 @@ public class Main extends Application {
 
     final double LINE_LENGTH = 100.0;
     final double CIRCLE_RADIUS = 25.0;
-
+ //   final double CIRCLE_WIDTH = 100;
+  //  final double CIRCLE_HEIGHT = 100;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -46,15 +49,29 @@ public class Main extends Application {
 
     public void draw(Stage primaryStage) {
         Group root = new Group();
-       // root.getChildren().add(new Circle(200, 200, CIRCLE_RADIUS));
         //draw line
-        double y = primaryStage.getWidth()/2;
-        Line line = new Line();
-        line.setStartX(50);
-        line.setEndX(50);
-        line.setStartY(y);
-        line.setEndY(y*this.loader.getNumberOfStates());
+        double y = 600/2;
+        Line line = new Line(300, 0,300, 100*this.loader.getNumberOfStates());
+        line.setStroke(Color.BLACK);
+        line.setStrokeWidth(3);
         root.getChildren().add(line);
+        double currentHeight = 100;
+        double currentWidth = 300;
+        for(int i = 0; i < this.loader.getNumberOfStates(); i++) {
+            Circle circle = new Circle(currentWidth, currentHeight, CIRCLE_RADIUS);
+
+            circle.setFill(Color.GREY);
+            circle.setStroke(Color.BLACK);
+            String iToS = String.valueOf(i);
+            Text text = new Text(iToS);
+            text.setX(currentWidth);
+            text.setY(currentHeight);
+            text.setBoundsType(TextBoundsType.VISUAL);
+
+            root.getChildren().add(circle);
+            root.getChildren().add(text);
+            currentHeight += 100;
+        }
         primaryStage.show();
         primaryStage.setTitle("Hello World");
         primaryStage.setScene(new Scene(root, 600, 800));
