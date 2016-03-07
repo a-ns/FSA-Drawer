@@ -1,7 +1,10 @@
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -12,16 +15,21 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-        primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 300, 275));
-        primaryStage.show();
+
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Open Folder");
         File file = chooser.showOpenDialog(primaryStage);
         loader.setFileName("foo.txt");
         loader.load();
 
+        //Drawing
+        Group root = new Group();
+        root.getChildren().add(new Circle(200,200,25));
+
+
+        primaryStage.show();
+        primaryStage.setTitle("Hello World");
+        primaryStage.setScene(new Scene(root, 600, 800));
 
     }
 
