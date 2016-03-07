@@ -22,55 +22,15 @@ public class FSALoader {
     private String stringOfTheFile;
     private int[] acceptStates;
     private int initialState;
+
+
+
     private int numberOfStates;
     private String[] alphabet;
     private String[] stateTransitions;
     private State[] arrayList;
 
-    private class State{
 
-        LinkedList<Transition> transitions;
-
-        public State(){
-            this.transitions = new LinkedList<Transition>();
-        }
-        public void addTransition(int index, char transitioner){
-            Transition tmp = new Transition(index, transitioner);
-            this.transitions.add(tmp);
-            return;
-        }
-
-
-        private class Transition{
-
-            private int index;
-            private char transitioner;
-
-            public Transition(int index, char transitioner){
-                this.index = index;
-                this.transitioner = transitioner;
-            }
-            public int getIndex() {
-                return index;
-            }
-
-            public void setIndex(int index) {
-                this.index = index;
-            }
-
-            public char getTransitioner() {
-                return transitioner;
-            }
-
-            public void setTransitioner(char transitioner) {
-                this.transitioner = transitioner;
-            }
-            @Override
-            public String toString(){
-                return this.getIndex() + ":" + this.getTransitioner();
-            }
-        }
-    }
 
 
     public FSALoader(){
@@ -106,7 +66,7 @@ public class FSALoader {
     }
 
 
-    public boolean load(){
+    public boolean run(){
 
         try {
             this.file = new Scanner(new File(this.fileName));
@@ -135,7 +95,7 @@ public class FSALoader {
     private void makeArrayList(){
         this.arrayList = new State[this.numberOfStates];
         for(int i = 0; i < this.numberOfStates; i++){
-            this.arrayList[i] = new State();
+            this.arrayList[i] = new State(i);
         }
         for(int i = 0; i < this.numberOfStates; i++){
             this.arrayList[i].transitions = new LinkedList<>();
@@ -148,21 +108,26 @@ public class FSALoader {
         }
     }
 
+    public State getState(int index){
+        return this.arrayList[index];
+    }
+
 
 
 
     public String getTransitionsOfState(int index){
-        String transitions = new String();
-        for(int i = 0; i < this.arrayList[index].transitions.size(); i++){
-            transitions += "(";
-            transitions += index+":";
-            transitions += this.arrayList[index].transitions.get(i).toString();
-            transitions += "), ";
-        }
-        return transitions;
+
+        return this.arrayList[index].toString();
+
     }
 
+    public int getNumberOfStates() {
+        return numberOfStates;
+    }
 
+    public void setNumberOfStates(int numberOfStates) {
+        this.numberOfStates = numberOfStates;
+    }
 
 
 
@@ -197,6 +162,17 @@ public class FSALoader {
 
 
         return true;
+    }
+
+
+    public int[] getAcceptStates(){
+        return this.acceptStates;
+    }
+    public String[] getAlphabet(){
+        return this.alphabet;
+    }
+    public int getInitialState(){
+        return this.initialState;
     }
 
 
