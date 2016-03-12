@@ -14,6 +14,10 @@ public class FSAProcessor {
     private FSALoader loader;
     private String currentSymbol;
 
+    /**
+     *
+     * @param file
+     */
     public FSAProcessor(File file){
         try {
             this.file = new Scanner(file);
@@ -30,47 +34,90 @@ public class FSAProcessor {
 
     }
 
+    /**
+     *
+     * @return
+     */
     public Scanner getFile() {
         return file;
     }
 
+    /**
+     *
+     * @param file
+     */
     public void setFile(Scanner file) {
         this.file = file;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getBuffer() {
         return buffer;
     }
 
+    /**
+     *
+     * @param buffer
+     */
     public void setBuffer(String buffer) {
         this.buffer = buffer;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getCurrentState() {
         return currentState;
     }
 
+    /**
+     *
+     * @param currentState
+     */
     public void setCurrentState(int currentState) {
         this.currentState = currentState;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isAccepting() {
         return accepting;
     }
 
+    /**
+     *
+     * @param accepting
+     */
     public void setAccepting(boolean accepting) {
         this.accepting = accepting;
     }
 
+    /**
+     *
+     * @return
+     */
     public FSALoader getLoader() {
         return loader;
     }
 
+    /**
+     *
+     * @param loader
+     */
     public void setLoader(FSALoader loader) {
         this.loader = loader;
     }
 
-
+    /** main method that is called
+     *
+     * @return
+     */
     public boolean run(){
         this.currentState = this.getLoader().getInitialState();
         for(int i = 0; i < this.buffer.length(); i++){
@@ -112,10 +159,4 @@ public class FSAProcessor {
         }
         return false;
     }
-
-
-
-
-
-
 }

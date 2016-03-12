@@ -1,9 +1,11 @@
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Alert;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
@@ -13,31 +15,47 @@ import javafx.scene.text.TextBoundsType;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
 
 public class Main extends Application {
     FSALoader loader = new FSALoader();
     FSAProcessor processor;
+    Drawer canvas;
 
-    final double LINE_LENGTH = 100.0;
-    final double CIRCLE_RADIUS = 25.0;
- //   final double CIRCLE_WIDTH = 100;
-  //  final double CIRCLE_HEIGHT = 100;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
         FileChooser chooser = new FileChooser();
-        chooser.setTitle("Open Folder");
+        chooser.setInitialDirectory(new File("."));
+        chooser.setTitle("Open FSA");
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("FSA files (*.fsa)", "*.fsa"));
         File file = chooser.showOpenDialog(primaryStage);
-        loader.setFileName("foo.txt");
-        loader.run();
-        processor = new FSAProcessor(new File("fooTest.txt"));
-        processor.setLoader(loader);
-        processor.run();
-        //Drawing
-        draw(primaryStage);
 
+        chooser.getExtensionFilters().remove(0);
+        chooser.setTitle("Open FSA Input File");
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("FSA INPUT files (*.input)", "*.input"));
+        File file1 = chooser.showOpenDialog(primaryStage);
+        if(file1 == null || file == null){
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText("ERROR");
+            alert.setTitle("ERROR");
+            alert.setContentText("No file input! File input is required! Program will exit.");
+            alert.showAndWait();
+            System.exit(0);
+        }
+        this.loader.setFileName(file.getName());
+        this.loader.run();
+        chooser.setTitle("Open String to Process");
+        this.processor = new FSAProcessor(file1);
+        this.processor.setLoader(loader);
+        showAlert(processor.run());
+
+
+        //Drawing
+        this.canvas = new Drawer(this.processor, this.loader);
+        this.canvas.draw(primaryStage);
 
     }
 
@@ -47,33 +65,27 @@ public class Main extends Application {
     }
 
 
-    public void draw(Stage primaryStage) {
-        Group root = new Group();
-        //draw line
-        double y = 600/2;
-        Line line = new Line(300, 0,300, 100*this.loader.getNumberOfStates());
-        line.setStroke(Color.BLACK);
-        line.setStrokeWidth(3);
-        root.getChildren().add(line);
-        double currentHeight = 100;
-        double currentWidth = 300;
-        for(int i = 0; i < this.loader.getNumberOfStates(); i++) {
-            Circle circle = new Circle(currentWidth, currentHeight, CIRCLE_RADIUS);
-
-            circle.setFill(Color.GREY);
-            circle.setStroke(Color.BLACK);
-            String iToS = String.valueOf(i);
-            Text text = new Text(iToS);
-            text.setX(currentWidth);
-            text.setY(currentHeight);
-            text.setBoundsType(TextBoundsType.VISUAL);
-
-            root.getChildren().add(circle);
-            root.getChildren().add(text);
-            currentHeight += 100;
+    /**
+     *
+     * @param bool
+     */
+    public void showAlert(boolean bool){
+        if(bool){
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText("ACCEPTED");
+            alert.setTitle("FSA String Input");
+            alert.setContentText("The string was ACCEPTED by the FSA.");
+            alert.showAndWait();
         }
-        primaryStage.show();
-        primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 600, 800));
+        else{
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText("REJECTED");
+            alert.setTitle("FSA String Input");
+            alert.setContentText("The string was REJECTED by the FSA.");
+            alert.showAndWait();
+        }
     }
+
+
+
 }

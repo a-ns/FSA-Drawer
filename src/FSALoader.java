@@ -1,6 +1,7 @@
 /**
  * Created by Alex on 3/6/2016.
  */
+import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
 
 import java.io.File;
@@ -23,16 +24,15 @@ public class FSALoader {
     private int[] acceptStates;
     private int initialState;
 
-
-
     private int numberOfStates;
     private String[] alphabet;
     private String[] stateTransitions;
     private State[] arrayList;
 
 
-
-
+    /**
+     * Default constructor
+     */
     public FSALoader(){
         this.file = null;
         this.fileName = null;
@@ -40,32 +40,58 @@ public class FSALoader {
         this.stringOfTheFile = null;
     }
 
-
+    /**
+     *
+     * @return
+     */
     public char[][] getMatrix() {
         return matrix;
     }
 
+    /**
+     *
+     * @param matrix
+     */
     public void setMatrix(char[][] matrix) {
         this.matrix = matrix;
     }
 
+    /**
+     *
+     * @return
+     */
     public Scanner getFile() {
         return file;
     }
 
+    /**
+     *
+     * @param file
+     */
     public void setFile(Scanner file) {
         this.file = file;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getFileName() {
         return fileName;
     }
 
+    /**
+     *
+     * @param fileName
+     */
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
 
-
+    /** main method that is ran
+     *
+     * @return
+     */
     public boolean run(){
 
         try {
@@ -85,13 +111,12 @@ public class FSALoader {
 
         makeMatrix();
         makeArrayList();
-        System.out.println("Stuff");
-        getTransitionsOfState(2);
-
         return true;
     }
 
-
+    /**
+     *
+     */
     private void makeArrayList(){
         this.arrayList = new State[this.numberOfStates];
         for(int i = 0; i < this.numberOfStates; i++){
@@ -108,40 +133,66 @@ public class FSALoader {
         }
     }
 
+    /**
+     *
+     * @param index
+     * @return
+     */
     public State getState(int index){
         return this.arrayList[index];
     }
 
 
-
-
+    /**
+     *
+     * @param index
+     * @return
+     */
     public String getTransitionsOfState(int index){
 
         return this.arrayList[index].toString();
 
     }
 
+    /**
+     *
+     * @return
+     */
     public int getNumberOfStates() {
         return numberOfStates;
     }
 
+    /**
+     *
+     * @param numberOfStates
+     */
     public void setNumberOfStates(int numberOfStates) {
         this.numberOfStates = numberOfStates;
     }
 
 
-
-
-
-
+    /**Splits up the input string into its pieces for the matrix.
+     *
+     * @param buffer the whole file
+     */
     private void tokenize(String buffer){
         String[] tokens = stringOfTheFile.split(";");
-
+        for(int i = 0; i < tokens.length; i++){
+            if(tokens[i].isEmpty()){
+                Alert error = new Alert(Alert.AlertType.ERROR);
+                error.setHeaderText("ERROR");
+                error.setTitle("ERROR");
+                error.setContentText("Input FSA file contains errors. Exiting!");
+                error.showAndWait();
+                System.exit(0);
+            }
+        }
         this.numberOfStates = Integer.parseInt(tokens[0]);
         this.alphabet = tokens[1].split(",");
 
 
         this.stateTransitions = tokens[2].split(",");
+
         this.initialState = Integer.parseInt(tokens[3]);
 
         String[] acceptStates = tokens[4].split(",");
@@ -152,11 +203,14 @@ public class FSALoader {
 
     }
 
+    /**
+     * Makes a matrix out of the input file
+     * @return boolean whether or not the method was successfull in making the matrix. As of right now, it should always return true.
+     */
     private boolean makeMatrix(){
         this.matrix = new char[this.numberOfStates][this.numberOfStates];
 
         for(int i = 0; i < this.stateTransitions.length; i++){
-            System.out.println(this.stateTransitions[i].charAt(1) + " " + this.stateTransitions[i].charAt(3));
             matrix[Character.getNumericValue(this.stateTransitions[i].charAt(1))][Character.getNumericValue(this.stateTransitions[i].charAt(3))] = this.stateTransitions[i].charAt(5);
         }
 
@@ -164,13 +218,26 @@ public class FSALoader {
         return true;
     }
 
-
+    /**
+     *
+     * @return
+     */
     public int[] getAcceptStates(){
         return this.acceptStates;
     }
+
+    /**
+     *
+     * @return
+     */
     public String[] getAlphabet(){
         return this.alphabet;
     }
+
+    /**
+     *
+     * @return
+     */
     public int getInitialState(){
         return this.initialState;
     }
