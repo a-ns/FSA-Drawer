@@ -19,14 +19,14 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
 
 public class Main extends Application {
-    FSALoader loader = new FSALoader();
+    FSALoader loader;
     FSAProcessor processor;
     Drawer canvas;
 
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-
+        this.loader = new FSALoader();
         FileChooser chooser = new FileChooser();
         chooser.setInitialDirectory(new File("."));
         chooser.setTitle("Open FSA");
@@ -34,8 +34,8 @@ public class Main extends Application {
         File file = chooser.showOpenDialog(primaryStage);
 
         chooser.getExtensionFilters().remove(0);
-        chooser.setTitle("Open FSA Input File");
-        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("FSA INPUT files (*.input)", "*.input"));
+        chooser.setTitle("Open FSA Input Text File");
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("FSA text files (*.txt)", "*.txt"));
         File file1 = chooser.showOpenDialog(primaryStage);
         if(file1 == null || file == null){
             Alert alert = new Alert(Alert.AlertType.ERROR);

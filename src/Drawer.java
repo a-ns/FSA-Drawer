@@ -93,7 +93,6 @@ public class Drawer {
                     }
                 }
             }
-
             root.getChildren().add(circle);
             /**
              * if the current state is an accept state, draw another circle.
@@ -192,6 +191,7 @@ public class Drawer {
         Text tTransition = new Text(cToS);
         tTransition.setX(x - offset + 3);
         tTransition.setY(((y + y -(LINE_LENGTH*statesAway))/2 - 15));
+
 
         //draw arrow
         x = x - CIRCLE_RADIUS;

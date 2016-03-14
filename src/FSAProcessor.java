@@ -139,6 +139,7 @@ public class FSAProcessor {
                 System.out.println("Illegal transitions on this input!");
                 System.exit(0);
             }
+
             LinkedList<State.Transition> transitions = new LinkedList<>();
             transitions = this.getLoader().getState(currentState).getTransitions();
             State.Transition tmp = null;
