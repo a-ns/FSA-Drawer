@@ -131,13 +131,13 @@ public class FSAProcessor {
             }
             if(!good){
                 System.out.println("Input string contains character not in alphabet!");
-                System.exit(0);
+                return false;
             }
             String transitionsOfThisState = new String(this.getLoader().getTransitionsOfState(this.currentState));
 
             if(!transitionsOfThisState.contains(currentSymbol)){
                 System.out.println("Illegal transitions on this input!");
-                System.exit(0);
+                return false;
             }
 
             LinkedList<State.Transition> transitions = new LinkedList<>();

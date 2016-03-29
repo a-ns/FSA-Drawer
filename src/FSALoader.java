@@ -242,6 +242,31 @@ public class FSALoader {
         return this.initialState;
     }
 
+    public String getAlphabetToString(){
+        String tmp = new String();
+        for(int i = 0; i < this.alphabet.length; i++){
+            tmp += this.alphabet[i] + " ";
+        }
+        return tmp;
+    }
+
+    public String getAcceptStatesToString(){
+        String tmp = new String();
+        for(int i = 0; i < this.getAcceptStates().length; i++){
+            tmp += this.getAcceptStates()[i] + " ";
+        }
+        return tmp;
+    }
+
+    public String getTransitionsToString(){
+        String tmp = new String();
+        tmp = "(";
+        for(int i = 0; i < this.stateTransitions.length; i++){
+            tmp += this.stateTransitions[i].replace(":", " ") + " ";
+        }
+        tmp += ")";
+        return tmp;
+    }
 
 
 
