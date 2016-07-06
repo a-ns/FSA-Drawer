@@ -35,9 +35,7 @@ public class Main extends Application {
 
         chooser.getExtensionFilters().remove(0);
         chooser.setTitle("Open FSA Input Text File");
-        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("FSA text files (*.txt)", "*.txt"));
-        File file1 = chooser.showOpenDialog(primaryStage);
-        if(file1 == null || file == null){
+        if(file == null){
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setHeaderText("ERROR");
             alert.setTitle("ERROR");
@@ -48,17 +46,10 @@ public class Main extends Application {
         this.loader.setFileName(file.getName());
         this.loader.run();
         chooser.setTitle("Open String to Process");
-        this.processor = new FSAProcessor(file1);
+        this.processor = new FSAProcessor();
         this.processor.setLoader(loader);
-        showAlert(processor.run());
-
-
-        //Drawing
-        this.canvas = new Drawer(this.processor, this.loader);
-        this.canvas.draw(primaryStage);
-
-
-        createLISP();
+        createPROLOG();
+        System.exit(0);
     }
 
 
@@ -88,10 +79,82 @@ public class Main extends Application {
         }
     }
 
+    private void createPROLOG(){
+        PrintWriter output = null;
+        try {
+            output = new PrintWriter(new File("JavaGenerated-FSA-Prolog.pl"));
+        }
+        catch(FileNotFoundException e){
+            e.printStackTrace();
+        }
+        if(null == output);
+        else{
+            output.append("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n" +
+                          "%%%THIS IS A JAVA GENERATED FILE%%\n" +
+                          "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n");
+            for(int i = 0; i < this.loader.getStateTransitions().length; i++){
+                String tmp = this.loader.getStateTransitions()[i];
+                tmp = tmp.replace(":", ",");
+                output.append("transition" + tmp +".\n");
+            }
+            for(int i = 0; i < this.loader.getAcceptStates().length; i++){
+                String tmp = String.valueOf(this.loader.getAcceptStates()[i]);
+                output.append("acceptState(" + tmp + ").\n");
+            }
+            String legal = createInput();
+            this.processor.setBuffer(legal);
+            while(!processor.run()){
+                legal = createInput();
+                this.processor.setBuffer(legal);
+            }
+
+
+
+            String illegal = createInput();
+            this.processor.setBuffer(illegal);
+            while(processor.run()){
+                illegal = createInput();
+                this.processor.setBuffer(illegal);
+            }
+
+
+
+            String legalToOutput = "[";
+            for(int i = 0; i < legal.length(); i++){
+                legalToOutput += legal.charAt(i) + ",";
+            }
+            legalToOutput = legalToOutput.substring(0, legalToOutput.length() - 1) + "]";
+
+            String illegalToOutput = "[";
+            for(int i = 0; i < illegal.length(); i++){
+                illegalToOutput += illegal.charAt(i) + ",";
+            }
+            illegalToOutput = illegalToOutput.substring(0, illegalToOutput.length() - 1) + "]";
+
+
+
+
+            output.append("checkTransition(CurrentChar,[CurrentChar|NewString],NewString). \n\n");
+            output.append("" +
+                    "run(CurrentState, []) :- acceptState(CurrentState).\n" +
+                    "run(CurrentState,CurrentString) :- \n" +
+                    "    transition(CurrentState, DestinationState, CurrentChar),\n" +
+                    "    checkTransition(CurrentChar, CurrentString , NewString),\n" +
+                    "    run(DestinationState, NewString).\n" +
+                    "demo(X) :- run(" + this.loader.getInitialState() + ", X).\n" +
+                    "bad :- demo(" + illegalToOutput + ").\n" +
+                    "good :- demo(" + legalToOutput + ").\n");
+            output.close();
+
+        }
+    }
+
+
+
     private void createLISP(){
         PrintWriter output = null;
         try {
-            output = new PrintWriter(new File("program.lsp"));
+            output = new PrintWriter(new File("JavaGenerated-FSA-Lisp.lsp"));
         }
         catch(FileNotFoundException e){
             e.printStackTrace();
@@ -110,7 +173,7 @@ public class Main extends Application {
                     ")\n");
 
             output.append("" +
-                    "(defun demoLegal ()\n" +
+                    "(defun demo ()\n" +
                     "\t(setlist)\n" +
                     "\t(setq fp (open \"thestring.txt\" :direction :input))\n" +
                     "\t(setq inputBuffer (read fp))\n" +
@@ -159,39 +222,54 @@ public class Main extends Application {
                     ")");
             output.close();
         }
-
-        String stringToOutput = createRandomInput();
+        PrintWriter legal;
+        String stringToOutput = createInput();
         this.processor.setBuffer(stringToOutput);
         while(!processor.run()){
-            stringToOutput = createRandomInput();
+            stringToOutput = createInput();
             this.processor.setBuffer(stringToOutput);
         }
         try {
-            output = new PrintWriter(new File("theString.txt"));
+            legal = new PrintWriter(new File("thestring.txt"));
             String lispLegalInput = new String();
             lispLegalInput = "(";
             for(int i = 0; i < stringToOutput.length(); i++){
                 lispLegalInput += stringToOutput.charAt(i) + " ";
             }
             lispLegalInput += ")";
-            output.write(lispLegalInput);
-            output.close();
+            legal.write(lispLegalInput);
+            legal.close();
         }
         catch(FileNotFoundException e){
             e.printStackTrace();
         }
 
-
-
-
-
-
     }
-        private String createRandomInput(){
+    int p = 0, q = 0, r = 0, s = 0, t = 0;
+
+        private String createInput(){
             String tmp = new String();
-            for(int i = 0; i < 5; i++){
-                int random = 0 + (int)(Math.random() * ((this.loader.getAlphabet().length - 1 - 0) + 1));
-                tmp += this.loader.getAlphabet()[random];
+            tmp += this.loader.getAlphabet()[p];
+            tmp += this.loader.getAlphabet()[q];
+            tmp += this.loader.getAlphabet()[r];
+            tmp += this.loader.getAlphabet()[s];
+            tmp += this.loader.getAlphabet()[t];
+            t++;
+            if(t == this.loader.getAlphabet().length){
+                t = 0;
+                s++;
+            }
+            if(s == this.loader.getAlphabet().length){
+                s = 0;
+                r++;
+            }
+            if(r == this.loader.getAlphabet().length){
+                r = 0;
+                q++;
+            }
+            if(q == this.loader.getAlphabet().length){
+                q = 0;
+                p++;
             }
             return tmp;
         }

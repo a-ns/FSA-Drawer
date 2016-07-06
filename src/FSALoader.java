@@ -267,7 +267,9 @@ public class FSALoader {
         tmp += ")";
         return tmp;
     }
-
+    public String[] getStateTransitions(){
+        return this.stateTransitions;
+    }
 
 
 

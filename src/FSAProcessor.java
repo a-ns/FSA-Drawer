@@ -33,6 +33,14 @@ public class FSAProcessor {
         }
 
     }
+    public FSAProcessor(){
+        this.file = null;
+        this.buffer = new String();
+        this.buffer = new String();
+        this.accepting = false;
+        this.currentState = -1;
+        this.loader = null;
+    }
 
     /**
      *
